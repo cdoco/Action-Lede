@@ -9,10 +9,3 @@ git clone https://github.com/jerrykuku/luci-theme-argon.git -b 18.06            
 git clone https://github.com/tty228/luci-app-serverchan.git                                              package/luci-app-serverchan
 git clone https://github.com/vernesong/OpenClash.git -b master                                           package/luci-app-openclash
 git clone https://github.com/max0y/luci-app-cd8021x.git -b master                                        package/luci-app-cd8021x
-
-
-
-
-      
-
-
