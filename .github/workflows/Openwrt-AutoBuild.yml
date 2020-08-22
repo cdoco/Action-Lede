@@ -56,7 +56,6 @@ jobs:
         echo "::set-env name=UPLOAD_FIRMWARE::${UPLOAD_FIRMWARE}"        
         echo "::set-env name=UPLOAD_TO_ARTIFACTS::${UPLOAD_TO_ARTIFACTS}"
         echo "::set-env name=UPLOAD_TO_REALEASE::${UPLOAD_TO_REALEASE}"
-        echo "::set-env name=UPLOAD_TO_COWTRANSFER::${UPLOAD_TO_COWTRANSFER}"       
         echo "::set-env name=WECHAT_NOTIFICATION::${WECHAT_NOTIFICATION}"
 
     - name: Clone source code
@@ -147,7 +146,6 @@ jobs:
           find openwrt/bin/targets/ -name "*bin*" | xargs -i cp {} ./Firmware/
           find openwrt/bin/targets/ -name "*img*" | xargs -i cp -f {} ./Firmware/
 
-    
     - name: Upload Packages to release
       if: env.UPLOAD_PACKAGES_DIR == 'true' && env.UPLOAD_TO_REALEASE == 'true' && !cancelled() &&  steps.compile.outputs.status == 'success'
       uses: svenstaro/upload-release-action@v1-release
@@ -168,21 +166,7 @@ jobs:
         asset_name: ${{matrix.target}}_targets.tar
         tag: ${{ env.DATE }}
         overwrite: true
-        file_glob: true
-
-        
-    - name: Upload Packages to CowTransfer
-      if: env.UPLOAD_PACKAGES_DIR == 'true' && env.UPLOAD_TO_COWTRANSFER == 'true' && !cancelled() &&  steps.compile.outputs.status == 'success'
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-         ./transfer cow --block 2621440 -s -p 64 --no-progress openwrt/bin/${{matrix.target}}_packages.tar
-        
-    - name: Upload Targetss to CowTransfer
-      if: env.UPLOAD_TARGETS_DIR == 'true' && env.UPLOAD_TO_COWTRANSFER == 'true' && !cancelled() &&　 steps.compile.outputs.status == 'success'
-      run: |
-        curl -fsSL git.io/file-transfer | sh
-         ./transfer cow --block 2621440 -s -p 64 --no-progress openwrt/bin/${{matrix.target}}_targets.tar
-        
+        file_glob: true  
 
     - name: Upload packages directory
       if: env.UPLOAD_PACKAGES_DIR == 'true' && env.UPLOAD_TO_ARTIFACTS == 'true' && !cancelled()　&& steps.compile.outputs.status == 'success'
@@ -190,7 +174,7 @@ jobs:
       with:
         name: OpenWrt_packages_${{matrix.target}}
         path: openwrt/bin/packages
-        
+
     - name: Upload targets directory
       if: env.UPLOAD_TARGETS_DIR == 'true' && env.UPLOAD_TO_ARTIFACTS == 'true' && !cancelled() && steps.compile.outputs.status == 'success'
       uses: actions/upload-artifact@main
