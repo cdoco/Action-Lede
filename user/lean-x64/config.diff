@@ -440,7 +440,7 @@ CONFIG_FEED_lienol=y
 CONFIG_PACKAGE_attendedsysupgrade-common=m
 # CONFIG_PACKAGE_auc is not set
 CONFIG_PACKAGE_base-files=y
-CONFIG_PACKAGE_block-mount=m
+CONFIG_PACKAGE_block-mount=y
 CONFIG_PACKAGE_blockd=m
 # CONFIG_PACKAGE_bridge is not set
 CONFIG_PACKAGE_busybox=y
