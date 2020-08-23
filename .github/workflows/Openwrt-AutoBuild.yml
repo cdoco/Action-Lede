@@ -150,7 +150,7 @@ jobs:
       if: env.UPLOAD_PACKAGES_DIR == 'true' && env.UPLOAD_TO_REALEASE == 'true' && !cancelled() &&  steps.compile.outputs.status == 'success'
       uses: svenstaro/upload-release-action@v1-release
       with:
-        repo_token: ${{ secrets.SUPER_TOKEN }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: openwrt/bin/${{matrix.target}}_packages.tar
         asset_name: ${{matrix.target}}_packages.tar
         tag: ${{ env.DATE }}
@@ -161,7 +161,7 @@ jobs:
       if: env.UPLOAD_TARGETS_DIR == 'true' && env.UPLOAD_TO_REALEASE == 'true' && !cancelled() &&  steps.compile.outputs.status == 'success'
       uses: svenstaro/upload-release-action@v1-release
       with:
-        repo_token: ${{ secrets.SUPER_TOKEN }}
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: openwrt/bin/${{matrix.target}}_targets.tar
         asset_name: ${{matrix.target}}_targets.tar
         tag: ${{ env.DATE }}
@@ -188,7 +188,7 @@ jobs:
       with:
         name: OpenWrt_firmware_${{matrix.target}}
         path: ./Firmware/
-               
+
     - name: WeChat notification
       if: env.WECHAT_NOTIFICATION == 'true' && !cancelled() && steps.compile.outputs.status == 'success'
       run: curl https://sc.ftqq.com/${{ secrets.SCKEY }}.send?text=${{matrix.target}}编译完成
