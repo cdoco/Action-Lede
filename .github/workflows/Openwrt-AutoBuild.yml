@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [lean-x64] # lean-x64,lean-ipq40xx,lean-mt7621,lean-rockchip
+        target: [lean-minimal-x64] # lean-minimal-x64,lean-x64
 
     steps:
     - name: Checkout
