@@ -52,9 +52,9 @@ CONFIG_DEFAULT_luci-app-webadmin=y
 # CONFIG_DEFAULT_luci-app-wol is not set
 # CONFIG_DEFAULT_luci-app-xlnetacc is not set
 # CONFIG_DEFAULT_luci-app-zerotier is not set
+CONFIG_DEFAULT_luci-proto-bonding=y
 
 # 自定义 LuCI 插件
-CONFIG_DEFAULT_luci-proto-bonding=y
 CONFIG_PACKAGE_luci-app-openclash=y
 CONFIG_PACKAGE_luci-app-adguardhome=y
 CONFIG_PACKAGE_luci-app-cd8021x=y
