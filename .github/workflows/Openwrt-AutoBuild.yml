@@ -129,14 +129,14 @@ jobs:
       if: steps.compile.outputs.status == 'success'
       run: |
         cd openwrt/bin/packages/
-        tar -cvf  ${{matrix.target}}_packages.tar ./
+        tar -cvf  ${{matrix.target}}-packages.tar ./
         mv *.tar ..
         
     - name:  Pack targets_dir
       if: steps.compile.outputs.status == 'success'
       run: |
         cd openwrt/bin/targets/
-        tar -cvf  ${{matrix.target}}_targets.tar ./
+        tar -cvf  ${{matrix.target}}-targets.tar ./
         mv *.tar ..
         
     - name: Assemble Firmware
@@ -150,9 +150,9 @@ jobs:
       if: env.UPLOAD_PACKAGES_DIR == 'true' && env.UPLOAD_TO_REALEASE == 'true' && !cancelled() &&  steps.compile.outputs.status == 'success'
       uses: svenstaro/upload-release-action@v1-release
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: openwrt/bin/${{matrix.target}}_packages.tar
-        asset_name: ${{matrix.target}}_packages.tar
+        repo_token: ${{ secrets.SUPER_TOKEN }}
+        file: openwrt/bin/${{matrix.target}}-packages.tar
+        asset_name: ${{matrix.target}}-packages.tar
         tag: ${{ env.DATE }}
         overwrite: true
         file_glob: true
@@ -161,9 +161,9 @@ jobs:
       if: env.UPLOAD_TARGETS_DIR == 'true' && env.UPLOAD_TO_REALEASE == 'true' && !cancelled() &&  steps.compile.outputs.status == 'success'
       uses: svenstaro/upload-release-action@v1-release
       with:
-        repo_token: ${{ secrets.GITHUB_TOKEN }}
-        file: openwrt/bin/${{matrix.target}}_targets.tar
-        asset_name: ${{matrix.target}}_targets.tar
+        repo_token: ${{ secrets.SUPER_TOKEN }}
+        file: openwrt/bin/${{matrix.target}}-targets.tar
+        asset_name: ${{matrix.target}}-targets.tar
         tag: ${{ env.DATE }}
         overwrite: true
         file_glob: true  
@@ -172,21 +172,21 @@ jobs:
       if: env.UPLOAD_PACKAGES_DIR == 'true' && env.UPLOAD_TO_ARTIFACTS == 'true' && !cancelled()　&& steps.compile.outputs.status == 'success'
       uses: actions/upload-artifact@main
       with:
-        name: OpenWrt_packages_${{matrix.target}}
+        name: OpenWrt-packages-${{matrix.target}}
         path: openwrt/bin/packages
 
     - name: Upload targets directory
       if: env.UPLOAD_TARGETS_DIR == 'true' && env.UPLOAD_TO_ARTIFACTS == 'true' && !cancelled() && steps.compile.outputs.status == 'success'
       uses: actions/upload-artifact@main
       with:
-        name: OpenWrt_targets_${{matrix.target}}
+        name: OpenWrt-targets-${{matrix.target}}
         path: openwrt/bin/targets
         
     - name: Upload Firmware
       if: env.UPLOAD_FIRMWARE == 'true' && env.UPLOAD_TO_ARTIFACTS == 'true' && !cancelled() && steps.compile.outputs.status == 'success'
       uses: actions/upload-artifact@main
       with:
-        name: OpenWrt_firmware_${{matrix.target}}
+        name: OpenWrt-firmware-${{matrix.target}}
         path: ./Firmware/
 
     - name: WeChat notification
