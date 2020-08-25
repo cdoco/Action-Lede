@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [lean-minimal-x64,lean-complete-x64,lean-x64] # lean-minimal-x64,lean-complete-x64,lean-x64
+        target: [lean-complete-x64] # lean-minimal-x64,lean-complete-x64,lean-x64
 
     steps:
     - name: Checkout
