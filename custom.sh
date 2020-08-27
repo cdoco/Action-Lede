@@ -1,9 +1,8 @@
 #!/bin/bash
 
-echo "Apply custom.sh"
-
 sed -i 's/DEPENDS.*/& \+luci-i18n-samba-zh-cn/g'                                package/lean/autosamba/Makefile
 
+# network
 sed -i "2i # network config"                                                    package/lean/default-settings/files/zzz-default-settings
 sed -i "3i uci set network.lan.ipaddr='192.168.2.1'"                            package/lean/default-settings/files/zzz-default-settings
 sed -i "4i uci set network.lan.proto='static'"                                  package/lean/default-settings/files/zzz-default-settings
@@ -12,6 +11,7 @@ sed -i "6i uci set network.lan.ifname='eth0'"                                   
 sed -i "7i uci set network.lan.netmask='255.255.255.0'"                         package/lean/default-settings/files/zzz-default-settings
 sed -i "10i uci commit network\n"                                               package/lean/default-settings/files/zzz-default-settings
 
+# luci pakage
 rm -rf package/lean/luci-theme-argon
 git clone https://github.com/CCnut/feed-netkeeper.git -b openwrt-18.06                                   package/nk
 git clone https://github.com/xiaoqingfengATGH/luci-theme-infinityfreedom.git                             package/luci-theme-infinityfreedom
