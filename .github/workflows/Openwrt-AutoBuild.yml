@@ -25,7 +25,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [lean-minimal-x64,lean-complete-x64,lean-x64] # lean-minimal-x64,lean-complete-x64,lean-x64
+        target: [lean-minimal-x64,lean-complete-x64]
 
     steps:
     - name: Checkout
@@ -138,24 +138,13 @@ jobs:
         cd openwrt/bin/targets/
         tar -cvf  ${{matrix.target}}-targets.tar ./
         mv *.tar ..
-        
+
     - name: Assemble Firmware
       run: |
           rm -rf ./Firmware/
           mkdir -p ./Firmware/
           find openwrt/bin/targets/ -name "*bin*" | xargs -i cp {} ./Firmware/
           find openwrt/bin/targets/ -name "*img*" | xargs -i cp -f {} ./Firmware/
-
-    - name: Upload Packages to release
-      if: env.UPLOAD_PACKAGES_DIR == 'true' && env.UPLOAD_TO_REALEASE == 'true' && !cancelled() &&  steps.compile.outputs.status == 'success'
-      uses: svenstaro/upload-release-action@v1-release
-      with:
-        repo_token: ${{ secrets.SUPER_TOKEN }}
-        file: openwrt/bin/${{matrix.target}}-packages.tar
-        asset_name: ${{matrix.target}}-packages.tar
-        tag: ${{ env.DATE }}
-        overwrite: true
-        file_glob: true
 
     - name: Upload Targets to release
       if: env.UPLOAD_TARGETS_DIR == 'true' && env.UPLOAD_TO_REALEASE == 'true' && !cancelled() &&  steps.compile.outputs.status == 'success'
