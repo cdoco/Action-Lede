@@ -48,7 +48,7 @@ jobs:
 
     - name: Load Settings.ini
       run: |    
-        source "${GITHUB_WORKSPACE}/user/${{matrix.target}}/settings.ini"
+        source "${GITHUB_WORKSPACE}/settings.ini"
         echo "::set-env name=REPO_URL::${REPO_URL}"
         echo "::set-env name=REPO_BRANCH::${REPO_BRANCH}"
         echo "::set-env name=UPLOAD_PACKAGES_DIR::${UPLOAD_PACKAGES_DIR}"
@@ -61,19 +61,19 @@ jobs:
     - name: Clone source code
       run: |
         git clone ${{ env.REPO_URL }} -b ${{ env.REPO_BRANCH }} openwrt
-        
+
     - name: Apply Patches
       run: | 
         echo "Apply patches"
-        if [ -n "$(ls -A "user/common/patches" 2>/dev/null)" ]; then
+        if [ -n "$(ls -A "common/patches" 2>/dev/null)" ]; then
         (
-          find "user/common/patches" -type f -name '*.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d 'openwrt' -p0 --forward"
+          find "common/patches" -type f -name '*.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d 'openwrt' -p0 --forward"
         )
         fi
 
-        if [ -n "$(ls -A "user/${{matrix.target}}/patches" 2>/dev/null)" ]; then
+        if [ -n "$(ls -A "${{matrix.target}}/patches" 2>/dev/null)" ]; then
         (
-          find "user/${{matrix.target}}/patches" -type f -name '*.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d 'openwrt' -p0 --forward"
+          find "${{matrix.target}}/patches" -type f -name '*.patch' -print0 | sort -z | xargs -I % -t -0 -n 1 sh -c "cat '%'  | patch -d 'openwrt' -p0 --forward"
         )
         fi         
 
@@ -85,26 +85,20 @@ jobs:
 
     - name: Load custom configuration
       run: |
-         cd openwrt && mv ../user/${{matrix.target}}/config.diff .config && cd ..        
+         cd openwrt && mv ../${{matrix.target}}/config.diff .config && cd ..        
          echo "Apply files..."
-         if [ -n "$(ls -A "user/common/files" 2>/dev/null)" ]; then
-         cp -r -f user/common/files/* openwrt/package/base-files/files/
+         if [ -n "$(ls -A "common/files" 2>/dev/null)" ]; then
+         cp -r -f common/files/* openwrt/package/base-files/files/
          fi
-         if [ -n "$(ls -A "user/${{matrix.target}}/files" 2>/dev/null)" ]; then
-         cp -r -f user/${{matrix.target}}/files/* openwrt/package/base-files/files/
+         if [ -n "$(ls -A "${{matrix.target}}/files" 2>/dev/null)" ]; then
+         cp -r -f ${{matrix.target}}/files/* openwrt/package/base-files/files/
          fi
         
          echo "Apply custom.sh"
-         if [ -f "user/common/custom.sh" ]; then
+         if [ -f "custom.sh" ]; then
          (
            cd openwrt
-           /bin/bash "../user/common/custom.sh"
-         )
-         fi       
-         if [ -f "user/${{matrix.target}}/custom.sh" ]; then
-         (
-           cd openwrt
-           /bin/bash "../user/${{matrix.target}}/custom.sh"
+           /bin/bash "../custom.sh"
          )
          fi
 
@@ -125,14 +119,14 @@ jobs:
         make -j3 || make -j1 V=s
         echo "::set-output name=status::success"
 
-    - name:  Pack packages_dir
+    - name: Pack packages_dir
       if: steps.compile.outputs.status == 'success'
       run: |
         cd openwrt/bin/packages/
         tar -cvf  ${{matrix.target}}-packages.tar ./
         mv *.tar ..
 
-    - name:  Pack targets_dir
+    - name: Pack targets_dir
       if: steps.compile.outputs.status == 'success'
       run: |
         cd openwrt/bin/targets/
@@ -145,6 +139,17 @@ jobs:
           mkdir -p ./Firmware/
           find openwrt/bin/targets/ -name "*bin*" | xargs -i cp {} ./Firmware/
           find openwrt/bin/targets/ -name "*img*" | xargs -i cp -f {} ./Firmware/
+
+    - name: Upload Packages to release
+      if: env.UPLOAD_PACKAGES_DIR == 'true' && env.UPLOAD_TO_REALEASE == 'true' && !cancelled() &&  steps.compile.outputs.status == 'success'
+      uses: svenstaro/upload-release-action@v1-release
+      with:
+        repo_token: ${{ secrets.SUPER_TOKEN }}
+        file: openwrt/bin/${{matrix.target}}-packages.tar
+        asset_name: ${{matrix.target}}-packages.tar
+        tag: ${{ env.DATE }}
+        overwrite: true
+        file_glob: true
 
     - name: Upload Targets to release
       if: env.UPLOAD_TARGETS_DIR == 'true' && env.UPLOAD_TO_REALEASE == 'true' && !cancelled() &&  steps.compile.outputs.status == 'success'
