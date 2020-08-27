@@ -79,7 +79,7 @@ jobs:
 
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
-      
+
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
 
@@ -107,7 +107,7 @@ jobs:
            /bin/bash "../user/${{matrix.target}}/custom.sh"
          )
          fi
-         
+
     - name: Download package
       id: package
       run: |
@@ -124,14 +124,14 @@ jobs:
         echo -e "3 thread compile"
         make -j3 || make -j1 V=s
         echo "::set-output name=status::success"
-        
+
     - name:  Pack packages_dir
       if: steps.compile.outputs.status == 'success'
       run: |
         cd openwrt/bin/packages/
         tar -cvf  ${{matrix.target}}-packages.tar ./
         mv *.tar ..
-        
+
     - name:  Pack targets_dir
       if: steps.compile.outputs.status == 'success'
       run: |
