@@ -8,3 +8,4 @@
 ## lean-complete (多功能完整版)
 
 ![](https://github.com/cdoco/Action-Lede/blob/master/images/state.png)
+![](https://github.com/cdoco/Action-Lede/blob/master/images/all.png)
