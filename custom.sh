@@ -1,6 +1,7 @@
 #!/bin/bash
 
 sed -i 's/DEPENDS.*/& \+luci-i18n-samba-zh-cn/g'                                package/lean/autosamba/Makefile
+sed -i 's/luci-theme-bootstrap/luci-theme-argon/g'                              feeds/luci/collections/luci/Makefile
 
 # network
 sed -i "2i # network config"                                                    package/lean/default-settings/files/zzz-default-settings
